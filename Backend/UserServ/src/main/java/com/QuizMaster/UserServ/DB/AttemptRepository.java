@@ -20,7 +20,7 @@ public interface AttemptRepository extends JpaRepository<Attempt,Long> {
             "WHERE q.quizid = :q" +
             "GROUP BY q.attempts;",nativeQuery = true)
     Integer noOfAttemptsLeft(
-            @Param("u")Long userID,
+            @Param("u")String userID,
             @Param("q")Long quizID
     );
 

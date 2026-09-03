@@ -15,6 +15,22 @@ Api:
         expects- QuizDTO in json (Quiz - quizID)
         returns- ResponseEntity
 
+3.@PostMapping("/start/{quizID}")
+        expects- quizID in long
+        returns- AttemptDTO
+        AttemptDTO{
+        attemptID:long, -1 means null, look at other value and start a new quiz
+        completedQuiz: boolean, true means quiz is over for you
+        }
+
+4.@PostMapping("/quiz/{attemptID}")
+        expects- attemptID in long
+        returns- questionDTO
+        QuestionDTO{
+
+        }
+
+
 Entity:
 1. Question
             long questionID;
