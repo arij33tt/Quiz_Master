@@ -3,6 +3,15 @@ Functional Requirement:
 1. Adding/uploading a question
 
 
+Api:
+1. @PostMapping("/user/{topicId}")
+        expects- QuestionDTO in Json(Question - (questionId and topicId) )
+        returns-ResponseEntity
+
+2.@PostMapping("/admin/quiz")
+        expects- QuizDTO in json (Quiz - quizID)
+        returns- ResponseEntity
+
 Entity:
 1. Question
             long questionID;
@@ -14,6 +23,15 @@ Entity:
             String option4;
             Boolean isMCQ=true;
             ArrayList<String> correct;
+2.Quiz
+                long quizID;
+                String topicId;
+                int numberOfQuestion;
+                int timeLimit; //in minutes
+                int correct=1;
+                int wrong=0;
+                int notAttended=0;
+
 
 Exceptions:
 1. CannotCreateTransactionException.class = for transactional
