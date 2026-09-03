@@ -1,6 +1,9 @@
-@Admin
+@Admin @User-two user modes
 Functional Requirement:
-1. Adding/uploading a question
+1. Adding/uploading a question                @Admin
+2. Adding a quiz                              @Admin
+3. Starting an attempt                        @User
+4. Keep attempts non concurrent for a user    @User
 
 
 Api:
@@ -31,10 +34,31 @@ Entity:
                 int correct=1;
                 int wrong=0;
                 int notAttended=0;
+                int attempts;
+3.Attempt
+                long attemptID;
+                long quizID;
+                String userID;
+                private Instant lastActivity;//in minutes
+                Boolean hasSubmitted=false;
+                int idle;//in minutes
+                int seed;//value of range(1,24)
+                private Instant startedAt;
 
+4.History
+                long attemptID;
+                long questionID;
+                boolean solved;
+                int answer;// range 1,4 inclusive
+                int seq;//during saving this i will store the sequence
 
 Exceptions:
 1. CannotCreateTransactionException.class = for transactional
 2. DataAccessResourceFailureException.class = in general if fails this will be triggered
 
 ---------------------------------------------------------------
+to improve efficiency of the db,
+
+1.    CREATE INDEX idx_history_attempt_solved_seq
+      ON history (attemptid, solved, seq);
+

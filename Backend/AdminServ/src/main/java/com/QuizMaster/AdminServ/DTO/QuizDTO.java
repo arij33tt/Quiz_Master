@@ -8,14 +8,24 @@ public class QuizDTO {
     int correct=1;
     int wrong=0;
     int notAttended=0;
+    int attempts;
 
-    public QuizDTO(String topicId, int numberOfQuestion, int timeLimit, int correct, int wrong, int notAttended) {
+    public QuizDTO(int attempts,String topicId, int numberOfQuestion, int timeLimit, int correct, int wrong, int notAttended) {
         this.topicId = topicId;
         this.numberOfQuestion = numberOfQuestion;
         this.timeLimit = timeLimit;
         this.correct = correct;
         this.wrong = wrong;
         this.notAttended = notAttended;
+        this.attempts=attempts;
+    }
+
+    public int getAttempts() {
+        return attempts;
+    }
+
+    public void setAttempts(int attempts) {
+        this.attempts = attempts;
     }
 
     public QuizDTO() {

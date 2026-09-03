@@ -1,6 +1,5 @@
-package com.QuizMaster.AdminServ.Quizs;
+package com.QuizMaster.UserServ.Quizs;
 
-import com.QuizMaster.AdminServ.DTO.QuizDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
@@ -18,7 +17,7 @@ public class Quiz {
     int correct=1;
     int wrong=0;
     int notAttended=0;
-    int attempts=1;
+    int attempts;
 
     public Quiz(int attempts,String topicId, int numberOfQuestion, int timeLimit, int correct, int wrong, int notAttended) {
         this.topicId = topicId;
@@ -30,16 +29,18 @@ public class Quiz {
         this.attempts=attempts;
     }
 
-
-    public Quiz(QuizDTO quizDTO) {
-        this.topicId=quizDTO.getTopicId();
-        this.attempts=quizDTO.getAttempts();
-        this.numberOfQuestion =quizDTO.getNumberOfQuestion();
-        this.timeLimit =quizDTO.getTimeLimit();
-        this.correct = quizDTO.getCorrect();
-        this.wrong = quizDTO.getWrong();
-        this.notAttended = quizDTO.getNotAttended();
+    public Quiz() {
     }
+    //
+//    public Quiz(QuizDTO quizDTO) {
+//        this.topicId=quizDTO.getTopicId();
+//
+//        this.numberOfQuestion =quizDTO.getNumberOfQuestion();
+//        this.timeLimit =quizDTO.getTimeLimit();
+//        this.correct = quizDTO.getCorrect();
+//        this.wrong = quizDTO.getWrong();
+//        this.notAttended = quizDTO.getNotAttended();
+//    }
 
     public long getQuizID() {
         return quizID;
@@ -95,5 +96,13 @@ public class Quiz {
 
     public void setNotAttended(int notAttended) {
         this.notAttended = notAttended;
+    }
+
+    public int getAttempts() {
+        return attempts;
+    }
+
+    public void setAttempts(int attempts) {
+        this.attempts = attempts;
     }
 }
