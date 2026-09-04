@@ -60,7 +60,8 @@ Api:
         expects-nothing
         returns-listOf(quiz) , order by desc attemptsLeft, 10 at max; that we have given
 
-10.@PostMapping("/admin/{quizID}")
+@Deprecated
+10.@PostMapping("/user/{quizID}")
         expects-quizID
         return-ListOf(AttemptDTO), order by recents
         AttemptDTO{

@@ -6,6 +6,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.List;
+
 @Service
 public class QuizServiceDB {
 
@@ -15,6 +17,10 @@ public class QuizServiceDB {
     public ResponseEntity<Object> saveThisQuiz(Quiz quiz){
         Quiz savedQuiz=quizRepository.save(quiz);
         return ResponseEntity.status(HttpStatus.CREATED).body(savedQuiz);
+    }
+
+    public List<Quiz> loadTen(){
+        return quizRepository.loadTen();
     }
 
 }

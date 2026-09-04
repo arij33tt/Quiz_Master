@@ -1,7 +1,5 @@
 package com.QuizMaster.AdminServ.DTO;
 
-import java.util.ArrayList;
-
 public class QuestionDTO {
     String question;
     String option1;
@@ -9,12 +7,12 @@ public class QuestionDTO {
     String option3;
     String option4;
     Boolean isMCQ=true;
-    ArrayList<String> correct;
+     Integer correct;
 
     public QuestionDTO() {
     }
 
-    public QuestionDTO(String question, String option1, String option2, String option3, String option4, Boolean isMCQ, ArrayList<String> correct) {
+    public QuestionDTO(String question, String option1, String option2, String option3, String option4, Boolean isMCQ, Integer correct) {
         this.question = question;
         this.option1 = option1;
         this.option2 = option2;
@@ -72,11 +70,11 @@ public class QuestionDTO {
         isMCQ = MCQ;
     }
 
-    public ArrayList<String> getCorrect() {
+    public Integer getCorrect() {
         return correct;
     }
 
-    public void setCorrect(ArrayList<String> correct) {
+    public void setCorrect(Integer correct) {
         this.correct = correct;
     }
 }

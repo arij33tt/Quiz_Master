@@ -1,11 +1,8 @@
 package com.QuizMaster.UserServ.Questions;
 
-import com.QuizMaster.UserServ.DTO.QuestionDTO;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
-
-import java.util.ArrayList;
 
 @Entity
 @Table(name="question")
@@ -21,10 +18,10 @@ public class Question {
     String option3;
     String option4;
     Boolean isMCQ=true;
-    ArrayList<String> correct;
+    Integer correct;
 
     // this will help in db calls
-    public Question(String question, String option1, String option2, String option3, String option4, Boolean isMCQ, ArrayList<String> correct) {
+    public Question(String question, String option1, String option2, String option3, String option4, Boolean isMCQ, Integer correct) {
         this.question = question;
         this.option1 = option1;
         this.option2 = option2;
@@ -36,7 +33,7 @@ public class Question {
 
     // to pick from db
 
-    public Question(long questionID, String topicId, String question, String option1, String option2, String option3, String option4, Boolean isMCQ, ArrayList<String> correct) {
+    public Question(long questionID, String topicId, String question, String option1, String option2, String option3, String option4, Boolean isMCQ, Integer correct) {
         this.questionID = questionID;
         this.topicId = topicId;
         this.question = question;
@@ -111,11 +108,11 @@ public class Question {
         isMCQ = MCQ;
     }
 
-    public ArrayList<String> getCorrect() {
+    public Integer getCorrect() {
         return correct;
     }
 
-    public void setCorrect(ArrayList<String> correct) {
+    public void setCorrect(Integer correct) {
         this.correct = correct;
     }
 }

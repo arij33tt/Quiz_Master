@@ -1,9 +1,11 @@
 package com.QuizMaster.UserServ.Controllers;
 
 import com.QuizMaster.UserServ.DB.AttemptRepository;
+import com.QuizMaster.UserServ.DB.QuizRepositories;
 import com.QuizMaster.UserServ.DTO.AttemptDTO;
 import com.QuizMaster.UserServ.DTO.QuestionDTO;
 import com.QuizMaster.UserServ.Questions.Question;
+import com.QuizMaster.UserServ.Quizs.Quiz;
 import com.QuizMaster.UserServ.Services.AttemptService;
 import com.QuizMaster.UserServ.Services.QuizService;
 import com.QuizMaster.UserServ.Services.SavingService;
@@ -13,6 +15,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
+import java.util.List;
 import java.util.Optional;
 
 @RestController
@@ -53,4 +56,16 @@ public class HomeController {
     public void senseHeartbeat(@PathVariable Long attemptID){
         attemptRepository.update(attemptID);
     }
+
+
+
+    //view controlls
+
+    @Autowired
+    QuizRepositories quizRepositories;
+    @PostMapping("/user/dashboard")
+    public List<Quiz> userDashboard(){
+        return quizRepositories.loadUpcoming("username");
+    }
+
 }
