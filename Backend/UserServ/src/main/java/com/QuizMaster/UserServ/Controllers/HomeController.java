@@ -4,12 +4,16 @@ import com.QuizMaster.UserServ.DTO.AttemptDTO;
 import com.QuizMaster.UserServ.DTO.QuestionDTO;
 import com.QuizMaster.UserServ.Questions.Question;
 import com.QuizMaster.UserServ.Services.QuizService;
+import com.QuizMaster.UserServ.Services.SavingService;
+import com.QuizMaster.UserServ.Services.SendingNextQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RestController;
+
+import java.util.Optional;
 
 @RestController
 public class HomeController {
@@ -27,10 +31,18 @@ public class HomeController {
         // to be handled by frontend
     }
 
-    @PostMapping("/quiz/{attemptID}")
-    public QuestionDTO theQuiz(@PathVariable Long attemptID){
+    @Autowired
+    SavingService savingService;
+    @Autowired
+    SendingNextQuestionService sendingNextQuestionService;
 
-        return null;
+    @PostMapping("/quiz/{attemptID}")
+    public QuestionDTO theQuiz(@PathVariable Long attemptID,@RequestBody QuestionDTO previousQuestion){
+
+        savingService.saveThis(previousQuestion,attemptID);
+        Optional<QuestionDTO> nextQuestion=sendingNextQuestionService.sendNext(attemptID);
+        if(nextQuestion.isEmpty())return null;
+        return nextQuestion.get();
     }
 
 }

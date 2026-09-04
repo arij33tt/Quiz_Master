@@ -1,5 +1,6 @@
 package com.QuizMaster.UserServ.DB;
 
+import com.QuizMaster.UserServ.DTO.QuestionDTO;
 import com.QuizMaster.UserServ.Questions.Question;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.data.jpa.repository.JpaRepository;
@@ -24,15 +25,27 @@ public interface QuestionRepository extends JpaRepository<Question,Long> {
             @Param("q") Long quizID
     );
 
-    @Query(value="SELECT q.*" +
+    @Query(value="SELECT" +
+            "    q.questionid," +
+            "    q.question," +
+            "    q.option1," +
+            "    q.option2," +
+            "    q.option3," +
+            "    q.option4," +
+            "    q.ismcq," +
+            "    a.seed," +
+            "    h.seq" +
             "FROM history h" +
             "JOIN question q" +
             "    ON h.questionid = q.questionid" +
+            "JOIN attempt a" +
+            "    ON h.attemptid = a.attemptid" +
             "WHERE h.attemptid = :a" +
             "  AND h.solved = false" +
             "ORDER BY h.seq ASC" +
-            "LIMIT 1;",nativeQuery = true)
-    Optional<Question> nextQuestion(
+            "LIMIT 1;",
+            nativeQuery = true)
+    Optional<QuestionDTO> nextQuestion(
             @Param("a")Long attemptID
     );
 

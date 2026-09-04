@@ -1,20 +1,31 @@
 package com.QuizMaster.UserServ.DTO;
 
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
+import lombok.RequiredArgsConstructor;
+
 import java.util.ArrayList;
 
+@NoArgsConstructor
+@AllArgsConstructor
+@RequiredArgsConstructor
 public class QuestionDTO {
+    Long questionID;
     String question;
     String option1;
     String option2;
     String option3;
     String option4;
     Boolean isMCQ=true;
-    int seed;
-    int selectedAns;
+    int seed=0;
+    int selectedAns=-1;
+    int seq=0;
 //    ArrayList<String> correct;
 
     public QuestionDTO() {
     }
+
+
 
     public QuestionDTO(String question, String option1, String option2, String option3, String option4, Boolean isMCQ) {
         this.question = question;
@@ -23,7 +34,23 @@ public class QuestionDTO {
         this.option3 = option3;
         this.option4 = option4;
         this.isMCQ = isMCQ;
-//        this.correct = correct;
+
+    }
+
+    public int getSeq() {
+        return seq;
+    }
+
+    public void setSeq(int seq) {
+        this.seq = seq;
+    }
+
+    public Long getQuestionID() {
+        return questionID;
+    }
+
+    public void setQuestionID(Long questionID) {
+        this.questionID = questionID;
     }
 
     public int getSeed() {

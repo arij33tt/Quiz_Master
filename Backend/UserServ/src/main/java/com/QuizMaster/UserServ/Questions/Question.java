@@ -52,6 +52,9 @@ public class Question {
     public Question() {
     }
 
+    public Question(Long questionID, Object o) {
+    }
+
     public String getTopicId() {
         return topicId;
     }

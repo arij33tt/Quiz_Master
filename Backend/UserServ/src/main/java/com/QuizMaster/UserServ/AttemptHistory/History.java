@@ -1,13 +1,18 @@
 package com.QuizMaster.UserServ.AttemptHistory;
 
 import jakarta.persistence.Entity;
+import jakarta.persistence.Id;
+import jakarta.persistence.IdClass;
 import jakarta.persistence.Table;
 
 @Entity
 @Table(name="History")
+@IdClass(MyCompositeKey.class)
 public class History {
 
+    @Id
     long attemptID;
+    @Id
     long questionID;
     boolean solved;
     int answer;// range 1,4 inclusive
