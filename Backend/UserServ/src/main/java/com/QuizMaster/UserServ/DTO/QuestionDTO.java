@@ -9,6 +9,8 @@ public class QuestionDTO {
     String option3;
     String option4;
     Boolean isMCQ=true;
+    int seed;
+    int selectedAns;
 //    ArrayList<String> correct;
 
     public QuestionDTO() {
@@ -22,6 +24,22 @@ public class QuestionDTO {
         this.option4 = option4;
         this.isMCQ = isMCQ;
 //        this.correct = correct;
+    }
+
+    public int getSeed() {
+        return seed;
+    }
+
+    public void setSeed(int seed) {
+        this.seed = seed;
+    }
+
+    public int getSelectedAns() {
+        return selectedAns;
+    }
+
+    public void setSelectedAns(int selectedAns) {
+        this.selectedAns = selectedAns;
     }
 
     public String getQuestion() {

@@ -5,3 +5,8 @@ If no, then we will look up in the db where the question.topicId == quiz.topicId
         then we will load all of them with attempt id and a few values to the attempt+question asked table.
 
 First lets create basic DTOs
+
+done
+ the next step should be {quiz/attemptID}
+i need to call the attempt readying function when i am returning the attemptID
+After that we can keep the question loading independent

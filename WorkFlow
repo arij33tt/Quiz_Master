@@ -24,10 +24,15 @@ Api:
         }
 
 4.@PostMapping("/quiz/{attemptID}")
-        expects- attemptID in long
-        returns- questionDTO
+        expects- questionDTO (solved)
+        returns- questionDTO (next unsolved ones)
         QuestionDTO{
-
+                  String question;
+                    String option1;
+                    String option2;
+                    String option3;
+                    String option4;
+                    Boolean isMCQ=true;
         }
 
 

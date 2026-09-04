@@ -19,12 +19,18 @@ public class HomeController {
 
 
     @PostMapping("/start/{quizID}")
-    public AttemptDTO startTheQuiz(@PathVariable Long quizID){// a dto is expected here
+    public Long startTheQuiz(@PathVariable Long quizID){// a dto is expected here
 // the dto we are using here is purely to pass the quizID
         // a service to start the quiz
         return quizService.startTheQuiz(quizID);
         // if attemptID is -1 then the test is completed
         // to be handled by frontend
+    }
+
+    @PostMapping("/quiz/{attemptID}")
+    public QuestionDTO theQuiz(@PathVariable Long attemptID){
+
+        return null;
     }
 
 }

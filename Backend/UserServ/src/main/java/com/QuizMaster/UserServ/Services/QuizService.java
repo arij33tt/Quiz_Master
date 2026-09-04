@@ -18,34 +18,34 @@ import java.util.Optional;
 public class QuizService {
 
     private boolean testCompleted=false;
-    public AttemptDTO startTheQuiz(Long quizID){
+    public Long startTheQuiz(Long quizID){
 
         // userId and question id will scan the attempt db and check of time left >0
         //and attempt >0, if not found return true, if found but two cond are true
         // return true
         //else return false
-        AttemptDTO attemptDTO=new AttemptDTO(-1,testCompleted);
-        Optional<Attempt> now= isThisFresh(quizID);
-                if(now.ifPresent())
-                          attemptDTO=new AttemptDTO(now.get().getAttemptID(),testCompleted);
-        return attemptDTO;
+        Long curr= isThisFresh(quizID);
+        return curr;
     }
 
+
+    @Autowired
+    ReadyingNewAttempt readyingNewAttempt;
 
     @Autowired
     AttemptRepository attemptRepo;
     @Autowired
     AttemptServiceDB attemptServ;
-    Optional<Attempt> isThisFresh(long quizID){
+    Long isThisFresh(long quizID){
         if(!attemptServ.isActive(quizID,"username")){
             // redirect to quiz page
             // do we have any attempts left
             testCompleted=true;
-            return null;//*TEST COMPLETED
+            return (long) -1;//*TEST COMPLETED
         }
         //other null means start a new test,
         Optional<Attempt>lastAttempt=attemptServ.isLastExp(quizID,"username");
-        if(lastAttempt.isEmpty())return lastAttempt;
+        if(lastAttempt.isEmpty())return readyingNewAttempt.newAttemptInit(quizID);
         Instant last=lastAttempt.get().getLastActivity();
         Instant curr= Instant.now();
         Duration duration= Duration.between(last,curr);
@@ -58,9 +58,11 @@ public class QuizService {
                         attemptRepo.save(attempt);
 
             });
-            return null;
+//            Attempt temp=new Attempt(quizID,"username");
+            return (readyingNewAttempt.newAttemptInit(quizID));
+
         }
-        return lastAttempt;
+        return lastAttempt.get().getAttemptID();
 
     }
 
