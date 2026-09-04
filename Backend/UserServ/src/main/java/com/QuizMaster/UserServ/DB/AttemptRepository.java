@@ -6,6 +6,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import java.time.Instant;
 import java.util.Optional;
 
 @Repository
@@ -37,4 +38,29 @@ public interface AttemptRepository extends JpaRepository<Attempt,Long> {
             @Param("q") Long quizID,
             @Param("u") String userID
     );
+
+
+
+    @Query(value="UPDATE attempt" +
+            "SET lastactivity = CURRENT_TIMESTAMP" +
+            "WHERE attemptid = :id" +
+            "  AND hassubmitted = false;"
+            , nativeQuery = true)
+    void update(
+            @Param("id") Long attemptID
+            );
+
+
+    @Query(value= """
+    UPDATE attempt a
+    SET hassubmitted = true
+    FROM quiz q
+    WHERE a.quizid = q.quizid
+      AND a.hassubmitted = false
+      AND CURRENT_TIMESTAMP >
+          a.startedat + (q.timelimit * INTERVAL '1 minute')
+    """,
+            nativeQuery = true)
+    void closeExp();
+
 }

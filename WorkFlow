@@ -34,6 +34,10 @@ Api:
                     String option4;
                     Boolean isMCQ=true;
         }
+5. @GetMapping("/quiz/{attemptID}/heartbeat")
+        expects-attemptID
+        return-nothing
+        updates the lastActivity
 
 
 Entity:

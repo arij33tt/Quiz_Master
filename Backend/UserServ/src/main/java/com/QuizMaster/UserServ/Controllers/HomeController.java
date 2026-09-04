@@ -1,18 +1,18 @@
 package com.QuizMaster.UserServ.Controllers;
 
+import com.QuizMaster.UserServ.DB.AttemptRepository;
 import com.QuizMaster.UserServ.DTO.AttemptDTO;
 import com.QuizMaster.UserServ.DTO.QuestionDTO;
 import com.QuizMaster.UserServ.Questions.Question;
+import com.QuizMaster.UserServ.Services.AttemptService;
 import com.QuizMaster.UserServ.Services.QuizService;
 import com.QuizMaster.UserServ.Services.SavingService;
 import com.QuizMaster.UserServ.Services.SendingNextQuestionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
+import java.time.Instant;
 import java.util.Optional;
 
 @RestController
@@ -45,4 +45,12 @@ public class HomeController {
         return nextQuestion.get();
     }
 
+
+    @Autowired
+    AttemptRepository attemptRepository;
+
+    @GetMapping("/quiz/{attemptID}/heartbeat")
+    public void senseHeartbeat(@PathVariable Long attemptID){
+        attemptRepository.update(attemptID);
+    }
 }
