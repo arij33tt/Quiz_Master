@@ -1,5 +1,7 @@
 package com.QuizMaster.UserServ.Controllers;
 
+import com.QuizMaster.UserServ.Auth.User;
+import com.QuizMaster.UserServ.Auth.UserRepository;
 import com.QuizMaster.UserServ.DB.AttemptRepository;
 import com.QuizMaster.UserServ.DB.QuizRepositories;
 import com.QuizMaster.UserServ.DTO.AttemptDTO;
@@ -68,4 +70,12 @@ public class HomeController {
         return quizRepositories.loadUpcoming("username");
     }
 
+
+    //auth controller
+    @Autowired
+    UserRepository userRepository;
+    @PostMapping("/user/register")
+    public void newUser(@RequestBody User newUser){
+        userRepository.save(newUser);
+    }
 }
