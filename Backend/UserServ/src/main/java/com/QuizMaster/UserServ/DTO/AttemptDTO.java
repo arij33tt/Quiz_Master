@@ -1,8 +1,18 @@
 package com.QuizMaster.UserServ.DTO;
 
+import lombok.AllArgsConstructor;
+import lombok.Getter;
+import lombok.RequiredArgsConstructor;
+import lombok.Setter;
+
+@Getter
+@Setter
+@RequiredArgsConstructor
+@AllArgsConstructor
 public class AttemptDTO {
 
   long attemptID;
+  int score;
   boolean completedQuiz;
 
     public AttemptDTO(long attemptID, boolean completedQuiz) {

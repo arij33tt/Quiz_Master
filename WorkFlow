@@ -39,6 +39,40 @@ Api:
         return-nothing
         updates the lastActivity
 
+6.@PostMapping("/admin/dashboard")
+        expects-nothing
+        returns-listOf(quiz), order by Latest creation, 10 at max
+
+7.@PostMapping("/admin/{quizID}")
+        expects-quizID
+        return-ListOf(AttemptDTO), order by recents
+        AttemptDTO{
+                long attemptID;
+                int score;
+                boolean completedQuiz;
+        }
+
+8.@PostMapping("/admin/{attemptID}")
+        excepts- attemptID
+        return-listOf(questions), questions grouped by attemptID
+
+9.@PostMapping("/user/dashboard")
+        expects-nothing
+        returns-listOf(quiz) , order by desc attemptsLeft, 10 at max; that we have given
+
+10.@PostMapping("/admin/{quizID}")
+        expects-quizID
+        return-ListOf(AttemptDTO), order by recents
+        AttemptDTO{
+                long attemptID;
+                int score;
+                boolean completedQuiz;
+        }
+
+11.@PostMapping("/user/{attemptID}")
+        excepts- attemptID
+        return-listOf(questions), questions grouped by attemptID
+
 
 Entity:
 1. Question
