@@ -1,9 +1,6 @@
 package com.QuizMaster.UserServ.Attempts;
 
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.PrePersist;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 
 import java.time.Instant;
 
@@ -12,6 +9,7 @@ import java.time.Instant;
 public class Attempt {
 
     @Id
+            @GeneratedValue
     long attemptID;
     long quizID;
     String userID;
@@ -21,6 +19,9 @@ public class Attempt {
     int seed;//value of range(1,24)
 
     private Instant startedAt;
+
+    public Attempt() {
+    }
 
     @PrePersist
     protected void onCreate() {

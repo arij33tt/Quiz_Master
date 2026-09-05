@@ -12,7 +12,7 @@ public class AttemptSchedular {
     this.attemptService=attemptService;
     }
 
-    @Scheduled(fixedRate = 1000)
+    @Scheduled(fixedRate = 30000)
     public void checkHeartBeat(){
         attemptService.handleTime();// this is supposed to be updating the lastActivity value, and if the
     }

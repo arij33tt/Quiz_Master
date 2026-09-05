@@ -14,40 +14,39 @@ import java.util.Optional;
 @Repository
 public interface QuestionRepository extends JpaRepository<Question,Long> {
     @Query(value="SELECT qu.*" +
-            "FROM quiz q" +
+            "FROM quiz q " +
             "JOIN question qu" +
-            "    ON qu.topicid = q.topicid" +
-            "WHERE q.quizid = :q" +
-            "ORDER BY RANDOM()" +
+            "    ON qu.topicid = q.topicid " +
+            "WHERE q.quizid = :q " +
+            "ORDER BY RANDOM() " +
             "LIMIT q.numberofquestion;",
     nativeQuery = true)
     List<Question> questionPool(
             @Param("q") Long quizID
     );
-
-    @Query(value="SELECT" +
-            "    q.questionid," +
-            "    q.question," +
-            "    q.option1," +
-            "    q.option2," +
-            "    q.option3," +
-            "    q.option4," +
-            "    q.ismcq," +
-            "    a.seed," +
-            "    h.seq" +
-            "FROM history h" +
-            "JOIN question q" +
-            "    ON h.questionid = q.questionid" +
-            "JOIN attempt a" +
-            "    ON h.attemptid = a.attemptid" +
-            "WHERE h.attemptid = :a" +
-            "  AND h.solved = false" +
-            "ORDER BY h.seq ASC" +
-            "LIMIT 1;",
+    @Query(value = """
+    SELECT
+        q.questionid,
+        q.question,
+        q.option1,
+        q.option2,
+        q.option3,
+        q.option4,
+        q.ismcq,
+        a.seed,
+        h.seq,
+        h.attemptid
+    FROM history h
+    JOIN question q
+        ON h.questionid = q.questionid
+    JOIN attempt a
+        ON h.attemptid = a.attemptid
+    WHERE h.attemptid = :a
+      AND h.solved = false
+    ORDER BY h.seq ASC
+    LIMIT 1
+    """,
             nativeQuery = true)
-    Optional<QuestionDTO> nextQuestion(
-            @Param("a")Long attemptID
-    );
-
+    List<Object[]> nextQuestion(@Param("a") Long attemptID);
 
 }

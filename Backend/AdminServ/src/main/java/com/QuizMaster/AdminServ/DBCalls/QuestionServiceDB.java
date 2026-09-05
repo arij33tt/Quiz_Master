@@ -14,9 +14,12 @@ public class QuestionServiceDB {
     QuestionRepository questionRepo;
 
     public ResponseEntity<Object> saveThisQuestion(Question question){
+        System.out.println(question.toString());
             Question savedQuestion = questionRepo.save(question);
             // Return 201 Created along with the saved question
-            return ResponseEntity.status(HttpStatus.CREATED).body(savedQuestion);
+        System.out.println(savedQuestion.getQuestionID());
+
+        return ResponseEntity.status(HttpStatus.CREATED).body(savedQuestion);
 
 
     }

@@ -12,8 +12,12 @@ import com.QuizMaster.UserServ.Services.AttemptService;
 import com.QuizMaster.UserServ.Services.QuizService;
 import com.QuizMaster.UserServ.Services.SavingService;
 import com.QuizMaster.UserServ.Services.SendingNextQuestionService;
+import jakarta.transaction.Transactional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
+import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.web.bind.annotation.*;
 
 import java.time.Instant;
@@ -41,21 +45,27 @@ public class HomeController {
     @Autowired
     SendingNextQuestionService sendingNextQuestionService;
 
-    @PostMapping("/quiz/{attemptID}")
-    public QuestionDTO theQuiz(@PathVariable Long attemptID,@RequestBody QuestionDTO previousQuestion){
-
-        savingService.saveThis(previousQuestion,attemptID);
-        Optional<QuestionDTO> nextQuestion=sendingNextQuestionService.sendNext(attemptID);
-        if(nextQuestion.isEmpty())return null;
-        return nextQuestion.get();
-    }
-
+//    @PostMapping("/quiz/{attemptID}")
+//    public QuestionDTO theQuiz(@PathVariable Long attemptID,@RequestBody QuestionDTO previousQuestion){
+//
+////        savingService.saveThis(previousQuestion,attemptID);
+//        Optional<QuestionDTO> nextQuestion=sendingNextQuestionService.sendNext(attemptID);
+//        if(nextQuestion.isEmpty())return null;
+//        return nextQuestion.get();
+//    }
+@PostMapping("/quiz/{attemptID}")
+public String theQuiz(@PathVariable Long attemptID) {
+    System.out.println(">>> HIT QUIZ ENDPOINT: " + attemptID);
+    return "TEST";
+}
 
     @Autowired
     AttemptRepository attemptRepository;
 
+    @Transactional
     @GetMapping("/quiz/{attemptID}/heartbeat")
     public void senseHeartbeat(@PathVariable Long attemptID){
+
         attemptRepository.update(attemptID);
     }
 
@@ -65,16 +75,28 @@ public class HomeController {
 
     @Autowired
     QuizRepositories quizRepositories;
+
     @PostMapping("/user/dashboard")
-    public List<Quiz> userDashboard(){
-        return quizRepositories.loadUpcoming("username");
+    public List<Quiz> userDashboard(@AuthenticationPrincipal UserDetails userDetails){
+        List<Quiz>quizzes= quizRepositories.loadUpcoming(userDetails.getUsername());
+
+        System.out.println("QUIZZES RETURNED = " + quizzes.size());
+
+        for (Quiz q : quizzes) {
+            System.out.println(
+                    "Quiz ID: " + q.getQuizID() +
+                            ", Topic: " + q.getTopicId() +
+                            ", Attempts: " + q.getAttempts()
+            );
+        }
+        return quizzes;
     }
 
 
     //auth controller
     @Autowired
     UserRepository userRepository;
-    @PostMapping("/user/register")
+    @PostMapping("/register")
     public void newUser(@RequestBody User newUser){
         userRepository.save(newUser);
     }

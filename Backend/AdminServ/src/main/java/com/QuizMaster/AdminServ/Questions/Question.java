@@ -2,6 +2,7 @@ package com.QuizMaster.AdminServ.Questions;
 
 import com.QuizMaster.AdminServ.DTO.QuestionDTO;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -10,6 +11,7 @@ import jakarta.persistence.Table;
 public class Question {
 
     @Id
+            @GeneratedValue
     long questionID;
 //    @ForeignKey()
     String topicId;
@@ -20,6 +22,21 @@ public class Question {
     String option4;
     Boolean isMCQ=true;
     Integer correct;
+
+
+    @Override
+    public String toString() {
+        return "Question{" +
+                "topicId='" + topicId + '\'' +
+                ", question='" + question + '\'' +
+                ", option1='" + option1 + '\'' +
+                ", option2='" + option2 + '\'' +
+                ", option3='" + option3 + '\'' +
+                ", option4='" + option4 + '\'' +
+                ", isMCQ=" + isMCQ +
+                ", correct=" + correct +
+                '}';
+    }
 
     // this will help in db calls
     public Question(String question, String option1, String option2, String option3, String option4, Boolean isMCQ, Integer correct) {
@@ -44,8 +61,19 @@ public class Question {
         this.correct = questionDTO.getCorrect();
     }
 
+
+
     //for empty init , in test or creating lists
     public Question() {
+    }
+
+
+    public long getQuestionID() {
+        return questionID;
+    }
+
+    public void setQuestionID(long questionID) {
+        this.questionID = questionID;
     }
 
     public String getTopicId() {

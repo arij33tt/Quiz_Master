@@ -5,15 +5,49 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
-@Getter
-@Setter
-@RequiredArgsConstructor
-@AllArgsConstructor
+import java.time.Instant;
+
+
 public class AttemptDTO {
 
   long attemptID;
   int score;
   boolean completedQuiz;
+
+    Instant startedAt;
+    int timeLimit;
+
+    public AttemptDTO(long attemptID, int score, boolean completedQuiz, Instant startedAt, int timeLimit) {
+        this.attemptID = attemptID;
+        this.score = score;
+        this.completedQuiz = completedQuiz;
+        this.startedAt = startedAt;
+        this.timeLimit = timeLimit;
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
+
+    public Instant getStartedAt() {
+        return startedAt;
+    }
+
+    public void setStartedAt(Instant startedAt) {
+        this.startedAt = startedAt;
+    }
+
+    public int getTimeLimit() {
+        return timeLimit;
+    }
+
+    public void setTimeLimit(int timeLimit) {
+        this.timeLimit = timeLimit;
+    }
 
     public AttemptDTO(long attemptID, boolean completedQuiz) {
         this.attemptID = attemptID;

@@ -1,6 +1,7 @@
 package com.QuizMaster.UserServ.Services;
 
 import com.QuizMaster.UserServ.Attempts.Attempt;
+import com.QuizMaster.UserServ.Auth.SecurityService;
 import com.QuizMaster.UserServ.DB.AttemptRepository;
 import com.QuizMaster.UserServ.DB.AttemptServiceDB;
 import com.QuizMaster.UserServ.DB.QuizServiceDB;
@@ -8,6 +9,8 @@ import com.QuizMaster.UserServ.DTO.AttemptDTO;
 import com.QuizMaster.UserServ.DTO.QuestionDTO;
 import com.QuizMaster.UserServ.Quizs.Quiz;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.annotation.AuthenticationPrincipal;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
 import java.time.Duration;
@@ -36,15 +39,17 @@ public class QuizService {
     AttemptRepository attemptRepo;
     @Autowired
     AttemptServiceDB attemptServ;
+@Autowired
+    SecurityService securityService;
     Long isThisFresh(long quizID){
-        if(!attemptServ.isActive(quizID,"username")){
+        if(!attemptServ.isActive(quizID, securityService.getCurrentUserId())){
             // redirect to quiz page
             // do we have any attempts left
             testCompleted=true;
             return (long) -1;//*TEST COMPLETED
         }
         //other null means start a new test,
-        Optional<Attempt>lastAttempt=attemptServ.isLastExp(quizID,"username");
+        Optional<Attempt>lastAttempt=attemptServ.isLastExp(quizID, securityService.getCurrentUserId());
         if(lastAttempt.isEmpty())return readyingNewAttempt.newAttemptInit(quizID);
         Instant last=lastAttempt.get().getLastActivity();
         Instant curr= Instant.now();

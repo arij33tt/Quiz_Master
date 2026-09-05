@@ -52,7 +52,7 @@ public class HomeController {
 
     @Autowired
     AttemptServiceDB attemptServiceDB;
-    @PostMapping("/admin/{quizID}")
+    @PostMapping("/admin/quiz/{quizID}")
     public List<AttemptDTO> attemptsInQuiz(@PathVariable Long quizID){
 
         return attemptServiceDB.loadAttempts(quizID);
@@ -60,7 +60,7 @@ public class HomeController {
 
     @Autowired
     QuestionRepository questionRepository;
-    @PostMapping("/admin/{attemptID}")
+    @PostMapping("/admin/attempt/{attemptID}")
     public List<Question> questionsInThis(@PathVariable Long attemptID){
         return questionRepository.loadQuestions(attemptID);
     }

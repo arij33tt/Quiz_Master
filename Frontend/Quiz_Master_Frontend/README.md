@@ -1,49 +1,31 @@
 # QuizMaster Frontend
 
-Plain HTML + CSS + JavaScript frontend for the Quiz_Master Spring services.
+Plain HTML, CSS and JavaScript frontend aligned with the current Quiz_Master repository.
 
 ## Run
 
-The simplest development setup is to serve this directory with any static HTTP server. Do not open `index.html` directly with `file://`, because browser CORS/fetch behavior is restrictive there.
+Serve this directory with any static HTTP server. Do not open `index.html` directly if your browser blocks cross-origin requests.
 
-Examples:
+Update `js/config.js` with the actual AdminServ/UserServ ports.
 
-```bash
-cd Frontend
-python -m http.server 5500
-```
+## Current backend alignment
 
-Then open `http://localhost:5500`.
+- User registration: `POST /user/register` with `{ userID, password }`.
+- User login: Spring Security form login at `POST /login` on UserServ.
+- User dashboard: `POST /user/dashboard`.
+- Start attempt: `POST /start/{quizID}`. Current backend returns a raw Long attempt id.
+- Question progression/submission: `POST /quiz/{attemptID}`.
+- Heartbeat: current backend is `GET /quiz/{attemptID}/heartbeat`, every 30 seconds.
+- Admin create quiz: `POST /admin/quiz`.
+- Admin add question: `POST /admin/{topicId}`.
+- Admin dashboard: `POST /admin/dashboard`.
+- Admin attempts: `POST /admin/{quizID}`.
+- Admin attempt questions: `POST /admin/{attemptID}`.
 
-## Backend URLs
+## Important backend notes
 
-Edit `js/config.js`:
+The current UserServ security configuration protects `/user/**`, which also currently protects `/user/register`. Registration therefore needs `/user/register` permitted anonymously before the registration screen can work.
 
-```js
-window.QUIZ_CONFIG = {
-  adminBaseUrl: 'http://localhost:8080',
-  userBaseUrl: 'http://localhost:8081',
-  heartbeatMethod: 'GET',
-  heartbeatIntervalMs: 30000
-};
-```
+The current repository does not expose an admin Spring Security login configuration, so the admin login UI is ready but its `/login` call will only work once AdminServ authentication is configured.
 
-Change the ports to match your Spring services.
-
-## Important backend alignment
-
-The frontend was written against the actual repository where it differs from the draft API description:
-
-- Admin question creation is currently `POST /admin/{topicId}`.
-- `POST /start/{quizID}` currently returns a raw `Long`, not `AttemptDTO`.
-- User `QuestionDTO` currently contains `seed`, `selectedAns`, and `seq`.
-- User heartbeat is currently `GET /quiz/{attemptID}/heartbeat`.
-- The current backend only exposes the two Admin creation endpoints and the User attempt/heartbeat endpoints in its controllers. Dashboard/history endpoints described in the requirements are not yet implemented, so their UI screens are prepared but will show an API error until those endpoints exist.
-
-## Assessment behavior
-
-The frontend reconstructs the option order from the question seed. If the permutation is `[2,3,1,4]`, the visible order is option2, option3, option1, option4. Clicking visible position 3 therefore submits `selectedAns: 1`.
-
-The same permutation logic is used for review screens, without displaying the correct answer.
-
-The heartbeat starts with the assessment and repeats every 30 seconds. It stops when the assessment ends.
+The frontend uses `credentials: include` for session-based Spring Security. Cross-origin deployment therefore requires appropriate CORS configuration on the services.

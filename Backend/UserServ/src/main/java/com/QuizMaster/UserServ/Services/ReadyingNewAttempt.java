@@ -1,6 +1,7 @@
 package com.QuizMaster.UserServ.Services;
 
 import com.QuizMaster.UserServ.Attempts.Attempt;
+import com.QuizMaster.UserServ.Auth.SecurityService;
 import com.QuizMaster.UserServ.DB.AttemptRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -10,9 +11,11 @@ public class ReadyingNewAttempt {
 
     // we would need quizID, userID, attemptID will auto generate
     //returns the attemptid
+    @Autowired
+    SecurityService securityService;
     public Long newAttemptInit(Long quizID){
 
-        Attempt attempt=new Attempt(quizID,"username");
+        Attempt attempt=new Attempt(quizID, securityService.getCurrentUserId());
         Long attemptID=savingFunc(attempt);
         return attemptID;
 

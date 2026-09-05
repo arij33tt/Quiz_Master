@@ -6,10 +6,9 @@ import lombok.RequiredArgsConstructor;
 
 import java.util.ArrayList;
 
-@NoArgsConstructor
-@AllArgsConstructor
-@RequiredArgsConstructor
+
 public class QuestionDTO {
+    Long attemptID;
     Long questionID;
     String question;
     String option1;
@@ -117,6 +116,26 @@ public class QuestionDTO {
         isMCQ = MCQ;
     }
 
+    public QuestionDTO(Long attemptID, Long questionID, String question, String option1, String option2, String option3, String option4, Boolean isMCQ, int seed, int selectedAns, int seq) {
+        this.attemptID = attemptID;
+        this.questionID = questionID;
+        this.question = question;
+        this.option1 = option1;
+        this.option2 = option2;
+        this.option3 = option3;
+        this.option4 = option4;
+        this.isMCQ = isMCQ;
+        this.seed = seed;
+        this.selectedAns = selectedAns;
+        this.seq = seq;
+    }
 
+    public Long getAttemptID() {
+        return attemptID;
+    }
+
+    public void setAttemptID(Long attemptID) {
+        this.attemptID = attemptID;
+    }
 }
 

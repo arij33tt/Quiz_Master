@@ -38,12 +38,80 @@
 
   function roleChooser() {
     app.innerHTML = `<div class="page role-grid">
-      <div class="hero"><span class="badge">QuizMaster</span><h1>Choose your workspace</h1><p class="muted">The same frontend supports the candidate and administrator workflows.</p></div>
-      <div class="grid grid-2">
-        <button class="card clickable role-card" data-role="user"><div class="icon">◉</div><h2>User</h2><p class="muted">Browse quizzes, take assessments, review scores and inspect previous question papers.</p></button>
-        <button class="card clickable role-card" data-role="admin"><div class="icon">▣</div><h2>Admin</h2><p class="muted">Create quizzes, add questions and inspect candidate attempts.</p></button>
+      <div class="hero">
+        <span class="badge">QuizMaster</span>
+        <h1>Welcome to QuizMaster</h1>
+        <p class="muted">Choose how you want to enter the system.</p>
       </div>
-      <div class="card" style="margin-top:18px"><strong>Development login</strong><p class="muted">Authentication is not present in the current repository, so this is a temporary role selector. Replace it with the shared login once authentication is added.</p></div>
+      <div class="grid grid-2">
+        <button class="card clickable role-card" data-role-login="user">
+          <div class="icon">◉</div>
+          <h2>User</h2>
+          <p class="muted">Sign in as a candidate to browse quizzes, take assessments and review your attempts.</p>
+          <span class="btn btn-primary">User login</span>
+        </button>
+        <button class="card clickable role-card" data-role-login="admin">
+          <div class="icon">▣</div>
+          <h2>Admin</h2>
+          <p class="muted">Sign in as an administrator to create quizzes, add questions and inspect attempts.</p>
+          <span class="btn btn-primary">Admin login</span>
+        </button>
+      </div>
+    </div>`;
+  }
+
+  function loginPage(role) {
+    const isAdmin = role === 'admin';
+    const title = isAdmin ? 'Admin login' : 'User login';
+    const description = isAdmin
+      ? 'Sign in to manage quizzes and candidate attempts.'
+      : 'Sign in to access your quizzes and assessment history.';
+
+    app.innerHTML = `<div class="login-page">
+      <div class="login-card">
+        <button class="btn btn-ghost login-back" data-action="home">← Back</button>
+        <div class="login-brand"><span class="brand-mark">Q</span><span>QuizMaster</span></div>
+        <div class="hero login-hero">
+          <span class="badge">${isAdmin ? 'Administrator' : 'Candidate'}</span>
+          <h1>${title}</h1>
+          <p class="muted">${description}</p>
+        </div>
+        <form id="login-form" class="form">
+          <input type="hidden" name="role" value="${role}">
+          <div class="field">
+            <label for="login-username">${isAdmin ? 'Username' : 'User ID'}</label>
+            <input id="login-username" name="username" type="text" autocomplete="username" placeholder="Enter ${isAdmin ? 'admin username' : 'user ID'}" required autofocus>
+          </div>
+          <div class="field">
+            <label for="login-password">Password</label>
+            <input id="login-password" name="password" type="password" autocomplete="current-password" placeholder="Enter password" required>
+          </div>
+          <button class="btn btn-primary btn-block" type="submit">Sign in</button>
+          ${!isAdmin ? `<button class="btn btn-secondary btn-block" type="button" data-action="register">Create new user</button>` : ``}
+          <div id="login-status" class="login-status"></div>
+        </form>
+      </div>
+    </div>`;
+  }
+
+  function registerPage() {
+    app.innerHTML = `<div class="login-page">
+      <div class="login-card">
+        <button class="btn btn-ghost login-back" data-action="user-login">← Back</button>
+        <div class="login-brand"><span class="brand-mark">Q</span><span>QuizMaster</span></div>
+        <div class="hero login-hero">
+          <span class="badge">New candidate</span>
+          <h1>Create account</h1>
+          <p class="muted">Create a user account to take quizzes and keep your attempts.</p>
+        </div>
+        <form id="register-form" class="form">
+          <div class="field"><label for="register-userID">User ID</label><input id="register-userID" name="userID" type="text" autocomplete="username" required autofocus></div>
+          <div class="field"><label for="register-password">Password</label><input id="register-password" name="password" type="password" autocomplete="new-password" required></div>
+          <div class="field"><label for="register-confirm">Confirm password</label><input id="register-confirm" name="confirm" type="password" autocomplete="new-password" required></div>
+          <button class="btn btn-primary btn-block" type="submit">Create account</button>
+          <div id="register-status" class="login-status"></div>
+        </form>
+      </div>
     </div>`;
   }
 
@@ -168,7 +236,9 @@
     const q = state.currentQuestion;
     if (!q || state.attemptId == null) return;
     const selectedAns = state.selectedViewIndex >= 0 ? Permutation.actualAnswerFromViewIndex(state.selectedViewIndex, state.permutation) : -1;
-    const solved = { ...q, selectedAns };
+    const solved = { ...q, selectedAns: Number(selectedAns),
+    seed: Number(q.seed),
+    seq: Number(q.seq) };
     try {
       const next = await API.user.submitQuestion(state.attemptId, solved);
       if (!next) { finishAssessment(); return; }
@@ -238,7 +308,7 @@
     const topicId = data.topicId;
     delete data.topicId;
     data.isMCQ = true;
-    data.correct = data.correct.split(',').map(x => x.trim()).filter(Boolean);
+    data.correct = Number(data.correct);
     try { await API.admin.addQuestion(topicId, data); document.getElementById('form-status').innerHTML = '<div class="badge success">Question added.</div>'; form.reset(); }
     catch (e) { document.getElementById('form-status').innerHTML = `<div class="error-box">${esc(errorText(e))}</div>`; }
   }
@@ -269,6 +339,9 @@
     clearAssessmentTimers();
     const p = path();
     if (p === '/') { roleChooser(); return; }
+    if (p === '/login/user') { loginPage('user'); return; }
+    if (p === '/login/admin') { loginPage('admin'); return; }
+    if (p === '/register') { registerPage(); return; }
     if (p === '/user') { state.role = 'user'; sessionStorage.setItem('role','user'); await userDashboard(); return; }
     if (p === '/user/quiz' && state.selectedQuiz) { quizDetails(); return; }
     if (p === '/user/attempt' && state.attemptId && state.currentQuestion) { renderAssessment(); startClock(); startHeartbeat(); return; }
@@ -282,8 +355,8 @@
   }
 
   document.addEventListener('click', async e => {
-    const role = e.target.closest('[data-role]');
-    if (role) { state.role = role.dataset.role; sessionStorage.setItem('role', state.role); go(`/${state.role}`); return; }
+    const roleLogin = e.target.closest('[data-role-login]');
+    if (roleLogin) { go(`/login/${roleLogin.dataset.roleLogin}`); return; }
     const quiz = e.target.closest('[data-quiz-index]');
     if (quiz) { state.selectedQuiz = state.userQuizzes[Number(quiz.dataset.quizIndex)]; go('/user/quiz'); return; }
     const adminQuiz = e.target.closest('[data-admin-quiz-index]');
@@ -295,6 +368,8 @@
     const action = e.target.closest('[data-action]')?.dataset.action;
     if (!action) return;
     if (action === 'home') go('/');
+    if (action === 'register') go('/register');
+    if (action === 'user-login') go('/login/user');
     if (action === 'logout') logout();
     if (action === 'user-dashboard') go('/user');
     if (action === 'user-history') go('/user/history');
@@ -306,6 +381,46 @@
   });
 
   document.addEventListener('submit', async e => {
+    const form = e.target.closest('#login-form');
+    if (form) {
+      e.preventDefault();
+      const role = form.querySelector('[name=role]').value;
+      const username = form.querySelector('[name=username]').value.trim();
+      const password = form.querySelector('[name=password]').value;
+      const status = document.getElementById('login-status');
+      status.innerHTML = '<div class="badge warn">Signing in…</div>';
+      try {
+        if (role === 'user') {
+          await API.auth.userLogin(username, password);
+          state.role = 'user';
+          sessionStorage.setItem('role', 'user');
+          go('/user');
+        } else {
+          await API.auth.adminLogin(username, password);
+          state.role = 'admin';
+          sessionStorage.setItem('role', 'admin');
+          go('/admin');
+        }
+      } catch (err) {
+        status.innerHTML = `<div class="error-box">${esc(errorText(err))}</div>`;
+      }
+      return;
+    }
+    if (e.target.id === 'register-form') {
+      e.preventDefault();
+      const data = Object.fromEntries(new FormData(e.target).entries());
+      const status = document.getElementById('register-status');
+      if (data.password !== data.confirm) { status.innerHTML = '<div class="error-box">Passwords do not match.</div>'; return; }
+      status.innerHTML = '<div class="badge warn">Creating account…</div>';
+      try {
+        await API.auth.register(data.userID.trim(), data.password);
+        status.innerHTML = '<div class="badge success">Account created. You can now sign in.</div>';
+        setTimeout(() => go('/login/user'), 700);
+      } catch (err) {
+        status.innerHTML = `<div class="error-box">${esc(errorText(err))}</div>`;
+      }
+      return;
+    }
     if (e.target.id === 'quiz-form') { e.preventDefault(); await submitQuizForm(e.target); }
     if (e.target.id === 'question-form') { e.preventDefault(); await submitQuestionForm(e.target); }
   });

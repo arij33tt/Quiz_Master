@@ -2,6 +2,7 @@ package com.QuizMaster.AdminServ.Quizs;
 
 import com.QuizMaster.AdminServ.DTO.QuizDTO;
 import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.Id;
 import jakarta.persistence.Table;
 
@@ -10,6 +11,7 @@ import jakarta.persistence.Table;
 public class Quiz {
 
     @Id
+            @GeneratedValue
     long quizID;
 
     String topicId;
@@ -20,7 +22,22 @@ public class Quiz {
     int notAttended=0;
     int attempts=1;
 
-    public Quiz(int attempts,String topicId, int numberOfQuestion, int timeLimit, int correct, int wrong, int notAttended) {
+
+    @Override
+    public String toString() {
+        return "Quiz{" +
+                "quizID=" + quizID +
+                ", topicId='" + topicId + '\'' +
+                ", numberOfQuestion=" + numberOfQuestion +
+                ", timeLimit=" + timeLimit +
+                ", correct=" + correct +
+                ", wrong=" + wrong +
+                ", notAttended=" + notAttended +
+                ", attempts=" + attempts +
+                '}';
+    }
+
+    public Quiz(int attempts, String topicId, int numberOfQuestion, int timeLimit, int correct, int wrong, int notAttended) {
         this.topicId = topicId;
         this.numberOfQuestion = numberOfQuestion;
         this.timeLimit = timeLimit;
