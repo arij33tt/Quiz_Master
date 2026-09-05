@@ -1,0 +1,29 @@
+/**
+ * Returns the unique permutation of [1, 2, 3, 4] for a given index (0 to 23).
+ * @param {number} index - An integer from 0 to 23.
+ * @returns {number[]} The respective sequence of 1, 2, 3, 4.
+ */
+//to be taken care off in frontend
+function getPermutation(index) {
+    if (index < 0 || index >= 24) {
+        throw new RangeError("Index must be between 0 and 23 inclusive.");
+    }
+
+    const numbers =;
+    const permutation = [];
+
+    // Precalculated factorials for 3!, 2!, 1!, 0!
+    const factorials =;
+
+    for (let i = 0; i < 4; i++) {
+        // Determine which element from the remaining pool goes next
+        const pos = Math.floor(index / factorials[i]);
+        index %= factorials[i];
+
+        // Remove the selected number from the pool and add to result
+        permutation.push(numbers.splice(pos, 1)[0]);
+    }
+
+    return permutation;
+}
+
