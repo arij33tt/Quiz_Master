@@ -11,19 +11,19 @@ import java.util.List;
 @Service
 public class AttemptServiceDB {
     @Autowired
-    AttemptRepository attemptRepository;
+    AttemptRepository attemptRepo;
 
-    public List<AttemptDTO> loadAttempts(Long quizID){
-        List<AttemptDTO> attemptDTOList=new ArrayList<>();
-        List<Object[]> dbo=attemptRepository.attemptsOnThis(quizID);
-        for(Object[] row: dbo){
-            Attempt attempt = (Attempt) row[0];
-            Integer score = ((Number) row[1]).intValue();
-            AttemptDTO b=new AttemptDTO(attempt.getAttemptID(),score,true);
-            attemptDTOList.add(b);
-        }
-        return attemptDTOList;
+    public List<AttemptDTO> loadAttempts(Long quizID) {
+
+        List<Object[]> rows = attemptRepo.attemptsOnThis(quizID);
+
+        return rows.stream()
+                .map(row -> new AttemptDTO(
+                        ((Number) row[0]).longValue(),
+                        ((Number) row[1]).intValue(),
+                        (Boolean) row[2]
+                ))
+                .toList();
     }
-
 
 }

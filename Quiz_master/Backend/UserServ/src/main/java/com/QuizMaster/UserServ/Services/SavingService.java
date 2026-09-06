@@ -16,6 +16,9 @@ public class SavingService {
 
     public void saveThis(QuestionDTO prevQuestion,Long attemptID){
         //(long attemptID, long questionID, boolean solved, int answer, int seq)
+        if (prevQuestion.getQuestionID() == null) {
+            return;
+        }
         if(prevQuestion==null){
             return;
         }

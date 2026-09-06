@@ -193,12 +193,7 @@
 
     user: {
 
-      attempts: () =>
-    jsonPost(
-        config.userBaseUrl,
-        '/user/attempts',
-        null
-    ),
+
       // -----------------------------------------------------
       // USER DASHBOARD
       // POST /user/dashboard

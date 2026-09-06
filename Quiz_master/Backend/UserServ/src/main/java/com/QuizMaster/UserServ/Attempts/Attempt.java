@@ -58,6 +58,7 @@ public class Attempt {
         this.hasSubmitted = false;
         this.idle = 0;//mins
         this.seed = 1+(int)(Math.rint (23*Math.random()));
+        this.lastActivity = Instant.now();
 
     }
 

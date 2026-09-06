@@ -5,12 +5,25 @@ import lombok.Getter;
 import lombok.RequiredArgsConstructor;
 import lombok.Setter;
 
+import java.time.Instant;
+
 
 public class AttemptDTO {
 
   long attemptID;
   int score;
   boolean completedQuiz;
+
+    public AttemptDTO() {
+    }
+
+    public int getScore() {
+        return score;
+    }
+
+    public void setScore(int score) {
+        this.score = score;
+    }
 
     public AttemptDTO(long attemptID, boolean completedQuiz) {
         this.attemptID = attemptID;
@@ -21,6 +34,12 @@ public class AttemptDTO {
         this.attemptID = attemptID;
         this.score = score;
         this.completedQuiz = completedQuiz;
+    }
+
+    public AttemptDTO(long attemptID, int i, Boolean hasSubmitted, Instant startedAt, int i1) {
+        this.attemptID=attemptID;
+        completedQuiz=hasSubmitted;
+
     }
 
     public boolean isCompletedQuiz() {

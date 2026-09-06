@@ -1,8 +1,10 @@
 package com.QuizMaster.UserServ.Controllers;
 
+import com.QuizMaster.UserServ.Auth.SecurityService;
 import com.QuizMaster.UserServ.Auth.User;
 import com.QuizMaster.UserServ.Auth.UserRepository;
 import com.QuizMaster.UserServ.DB.AttemptRepository;
+import com.QuizMaster.UserServ.DB.AttemptServiceDB;
 import com.QuizMaster.UserServ.DB.QuizRepositories;
 import com.QuizMaster.UserServ.DTO.AttemptDTO;
 import com.QuizMaster.UserServ.DTO.QuestionDTO;
@@ -45,19 +47,25 @@ public class HomeController {
     @Autowired
     SendingNextQuestionService sendingNextQuestionService;
 
-//    @PostMapping("/quiz/{attemptID}")
-//    public QuestionDTO theQuiz(@PathVariable Long attemptID,@RequestBody QuestionDTO previousQuestion){
-//
-////        savingService.saveThis(previousQuestion,attemptID);
-//        Optional<QuestionDTO> nextQuestion=sendingNextQuestionService.sendNext(attemptID);
-//        if(nextQuestion.isEmpty())return null;
-//        return nextQuestion.get();
-//    }
-@PostMapping("/quiz/{attemptID}")
-public String theQuiz(@PathVariable Long attemptID) {
-    System.out.println(">>> HIT QUIZ ENDPOINT: " + attemptID);
-    return "TEST";
-}
+    @PostMapping("/quiz/{attemptID}")
+    public QuestionDTO theQuiz(@PathVariable Long attemptID,@RequestBody QuestionDTO previousQuestion){
+
+        savingService.saveThis(previousQuestion,attemptID);
+        Optional<QuestionDTO> nextQuestion=sendingNextQuestionService.sendNext(attemptID);
+        if(nextQuestion.isEmpty())return null;
+        return nextQuestion.get();
+    }
+
+    @Autowired
+    AttemptServiceDB attemptServiceDB;
+    @Autowired
+    SecurityService securityService;
+    @PostMapping("/user/attempts")
+    public List<AttemptDTO> userAttempts() {
+        return attemptServiceDB.loadAttempts(
+                securityService.getCurrentUserId()
+        );
+    }
 
     @Autowired
     AttemptRepository attemptRepository;

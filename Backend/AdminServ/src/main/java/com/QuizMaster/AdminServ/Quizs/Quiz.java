@@ -22,6 +22,8 @@ public class Quiz {
     int notAttended=0;
     int attempts=1;
 
+    public Quiz() {
+    }
 
     @Override
     public String toString() {

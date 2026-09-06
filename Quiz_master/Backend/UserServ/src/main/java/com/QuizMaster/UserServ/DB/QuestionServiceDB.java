@@ -11,7 +11,7 @@ public class QuestionServiceDB {
     @Autowired
     QuestionRepository questionRepository;
 
-    List<Question> generateQuestionPool(Long quizID){
+    public List<Question> generateQuestionPool(Long quizID){
         return questionRepository.questionPool(quizID);
     }
 

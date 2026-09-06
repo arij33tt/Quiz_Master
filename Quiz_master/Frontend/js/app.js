@@ -179,55 +179,23 @@
       const question = await API.user.submitQuestion(state.attemptId, {
         questionID: null, question: '', option1: '', option2: '', option3: '', option4: '', isMCQ: true, selectedAns: -1, seed: 0, seq: 0
       });
-      if (!question) {
-    finishAssessment();
-    return;
-}
-
-console.log("QUESTION FROM SERVER:", question);
-console.log("SEED:", question.seed, "TYPE:", typeof question.seed);
-
-question.questionID = Number(question.questionID);
-question.seed = Number(question.seed);
-question.seq = Number(question.seq);
-
-if (!Number.isInteger(question.seed)) {
-    showToast("Invalid seed received from server.");
-    return;
-}
-
-beginAssessment(question);
+      if (!question) { finishAssessment(); return; }
+      beginAssessment(question);
     } catch (e) {
       showToast(errorText(e));
     }
   }
 
- function beginAssessment(question) {
+  function beginAssessment(question) {
     clearAssessmentTimers();
-
-    question.questionID = Number(question.questionID);
-    question.seed = Number(question.seed);
-    question.seq = Number(question.seq);
-
-    // Backend seed is 1..24.
-    // Frontend permutation accepts 0..23 internally.
-    if (!Number.isInteger(question.seed) ||
-        question.seed < 1 ||
-        question.seed > 24) {
-        showToast(`Invalid seed received: ${question.seed}`);
-        return;
-    }
-
     state.currentQuestion = question;
     state.selectedViewIndex = -1;
-
-    state.permutation =
-        Permutation.getPermutation(question.seed);
-
+    try { state.permutation = Permutation.getPermutation(question.seed); }
+    catch { state.permutation = [1,2,3,4]; }
     startClock();
     startHeartbeat();
     renderAssessment();
-}
+  }
 
   function renderAssessment() {
     const q = state.currentQuestion;
@@ -285,77 +253,12 @@ beginAssessment(question);
     clearAssessmentTimers();
     app.innerHTML = shell(`<main class="page narrow"><section class="card" style="text-align:center;padding:55px 30px"><span class="badge success">Assessment complete</span><h1 style="margin-top:15px">You have completed the quiz.</h1><p class="muted">Your attempt has been handed back to the server for final scoring.</p><div style="margin-top:25px"><button class="btn btn-primary" data-action="user-dashboard">Back to quizzes</button></div></section></main>`, 'QuizMaster');
   }
-  
-async function userHistory() {
 
-    app.innerHTML = shell(
-        `<main class="page">
-            <div class="hero">
-                <span class="badge">History</span>
-                <h1>Previous attempts</h1>
-                <p class="muted">Your previous quiz attempts.</p>
-            </div>
-
-            <div id="content" class="loading">
-                Loading attempts…
-            </div>
-        </main>`,
-        'QuizMaster',
-        '<button class="btn btn-ghost" data-action="user-dashboard">Back</button>'
-    );
-
-    try {
-
-        const attempts = await API.user.attempts();
-
-        const arr = Array.isArray(attempts) ? attempts : [];
-
-        if (!arr.length) {
-            document.getElementById('content').innerHTML =
-                '<div class="card empty">No previous attempts.</div>';
-            return;
-        }
-
-        document.getElementById('content').innerHTML = `
-            <div class="card">
-                ${arr.map(a => `
-                    <div class="attempt-item">
-
-                        <div>
-                            <strong>
-                                Attempt #${esc(a.attemptID)}
-                            </strong>
-
-                            <div class="muted">
-                                ${a.completedQuiz
-                                    ? 'Completed'
-                                    : 'In progress'}
-                            </div>
-                        </div>
-
-                        <div>
-                            <strong>
-                                Score: ${esc(a.score ?? 0)}
-                            </strong>
-                        </div>
-
-                        <button
-                            class="btn btn-secondary"
-                            data-user-attempt-id="${esc(a.attemptID)}">
-                            View paper
-                        </button>
-
-                    </div>
-                `).join('')}
-            </div>
-        `;
-
-    } catch (e) {
-
-        document.getElementById('content').innerHTML =
-            `<div class="error-box">${esc(errorText(e))}</div>`;
-    }
-}
+  async function userHistory() {
+    app.innerHTML = shell(`<main class="page"><div class="hero"><span class="badge">History</span><h1>Previous attempts</h1><p class="muted">Scores and question papers from completed attempts.</p></div><div id="content" class="loading">Select an attempt from the dashboard data.</div></main>`, 'QuizMaster', '<button class="btn btn-ghost" data-action="user-dashboard">Back</button>');
+    // There is no user-wide history endpoint in the current repository/API.
+    document.getElementById('content').innerHTML = `<div class="card error-box">The supplied API contract provides <code>POST /user/{attemptID}</code> for an individual attempt, but no endpoint that lists the current user's attempts. Add that list endpoint before this screen can populate automatically.</div>`;
+  }
 
   function renderHistoryQuestions(questions, seed) {
     const arr = Array.isArray(questions) ? questions : [];
@@ -451,96 +354,31 @@ async function userHistory() {
     go('/');
   }
 
- document.addEventListener('click', async e => {
-
+  document.addEventListener('click', async e => {
     const roleLogin = e.target.closest('[data-role-login]');
-    if (roleLogin) {
-        go(`/login/${roleLogin.dataset.roleLogin}`);
-        return;
-    }
-
+    if (roleLogin) { go(`/login/${roleLogin.dataset.roleLogin}`); return; }
     const quiz = e.target.closest('[data-quiz-index]');
-    if (quiz) {
-        state.selectedQuiz =
-            state.userQuizzes[Number(quiz.dataset.quizIndex)];
-        go('/user/quiz');
-        return;
-    }
-
+    if (quiz) { state.selectedQuiz = state.userQuizzes[Number(quiz.dataset.quizIndex)]; go('/user/quiz'); return; }
     const adminQuiz = e.target.closest('[data-admin-quiz-index]');
-    if (adminQuiz) {
-        state.selectedQuiz =
-            state.adminQuizzes[Number(adminQuiz.dataset.adminQuizIndex)];
-        go('/admin/attempts');
-        return;
-    }
-
+    if (adminQuiz) { state.selectedQuiz = state.adminQuizzes[Number(adminQuiz.dataset.adminQuizIndex)]; go('/admin/attempts'); return; }
     const option = e.target.closest('[data-option-index]');
-    if (option) {
-        state.selectedViewIndex =
-            Number(option.dataset.optionIndex);
-        renderAssessment();
-        return;
-    }
-
-    // ADMIN attempt
+    if (option) { state.selectedViewIndex = Number(option.dataset.optionIndex); renderAssessment(); return; }
     const attempt = e.target.closest('[data-attempt-id]');
-    if (attempt) {
-        state.attemptId =
-            Number(attempt.dataset.attemptId);
-        go('/admin/attempt');
-        return;
-    }
-
-    // USER history attempt
-    const userAttempt =
-        e.target.closest('[data-user-attempt-id]');
-
-    if (userAttempt) {
-        state.attemptId =
-            Number(userAttempt.dataset.userAttemptId);
-        go('/user/history/attempt');
-        return;
-    }
-
-    const action =
-        e.target.closest('[data-action]')?.dataset.action;
-
+    if (attempt) { state.attemptId = Number(attempt.dataset.attemptId); go('/admin/attempt'); return; }
+    const action = e.target.closest('[data-action]')?.dataset.action;
     if (!action) return;
-
-    if (action === 'home')
-        go('/');
-
-    if (action === 'register')
-        go('/register');
-
-    if (action === 'user-login')
-        go('/login/user');
-
-    if (action === 'logout')
-        logout();
-
-    if (action === 'user-dashboard')
-        go('/user');
-
-    if (action === 'user-history')
-        go('/user/history');
-
-    if (action === 'start-quiz')
-        await startQuiz();
-
-    if (action === 'next-question')
-        await submitCurrentQuestion(false);
-
-    if (action === 'admin-dashboard')
-        go('/admin');
-
-    if (action === 'create-quiz')
-        go('/admin/create');
-
-    if (action === 'add-question')
-        go('/admin/question');
-});;
+    if (action === 'home') go('/');
+    if (action === 'register') go('/register');
+    if (action === 'user-login') go('/login/user');
+    if (action === 'logout') logout();
+    if (action === 'user-dashboard') go('/user');
+    if (action === 'user-history') go('/user/history');
+    if (action === 'start-quiz') await startQuiz();
+    if (action === 'next-question') await submitCurrentQuestion(false);
+    if (action === 'admin-dashboard') go('/admin');
+    if (action === 'create-quiz') go('/admin/create');
+    if (action === 'add-question') go('/admin/question');
+  });
 
   document.addEventListener('submit', async e => {
     const form = e.target.closest('#login-form');

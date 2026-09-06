@@ -13,17 +13,21 @@ import java.util.Optional;
 
 @Repository
 public interface QuestionRepository extends JpaRepository<Question,Long> {
-    @Query(value="SELECT qu.*" +
-            "FROM quiz q " +
-            "JOIN question qu" +
-            "    ON qu.topicid = q.topicid " +
-            "WHERE q.quizid = :q " +
-            "ORDER BY RANDOM() " +
-            "LIMIT q.numberofquestion;",
-    nativeQuery = true)
-    List<Question> questionPool(
-            @Param("q") Long quizID
-    );
+    @Query(value = """
+    SELECT qu.*
+    FROM quiz q
+    JOIN question qu
+        ON qu.topic_id = q.topic_id
+    WHERE q.quizid = :q
+    ORDER BY RANDOM()
+    LIMIT (
+        SELECT number_of_question
+        FROM quiz
+        WHERE quizid = :q
+    )
+    """,
+            nativeQuery = true)
+    List<Question> questionPool(@Param("q") Long quizID);
     @Query(value = """
     SELECT
         q.questionid,

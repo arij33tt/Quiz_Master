@@ -115,4 +115,12 @@ public class Question {
     public void setCorrect(Integer correct) {
         this.correct = correct;
     }
+
+    public long getQuestionID() {
+        return questionID;
+    }
+
+    public void setQuestionID(long questionID) {
+        this.questionID = questionID;
+    }
 }

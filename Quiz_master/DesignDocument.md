@@ -85,7 +85,7 @@ Entity:
             String option3;
             String option4;
             Boolean isMCQ=true;
-            ArrayList<String> correct;
+            Integer correct;
 2.Quiz
                 long quizID;
                 String topicId;

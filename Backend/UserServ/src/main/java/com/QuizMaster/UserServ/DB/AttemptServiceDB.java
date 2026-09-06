@@ -1,9 +1,11 @@
 package com.QuizMaster.UserServ.DB;
 
 import com.QuizMaster.UserServ.Attempts.Attempt;
+import com.QuizMaster.UserServ.DTO.AttemptDTO;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.Instant;
 import java.util.List;
 import java.util.Optional;
 
@@ -13,6 +15,8 @@ public class AttemptServiceDB {
     @Autowired
     AttemptRepository attemptRepo;
 
+    
+    
     public boolean isActive(Long quizID, String userID){
         if(attemptRepo.noOfAttemptsLeft(userID,quizID)==0)
             return false;
@@ -22,5 +26,21 @@ public class AttemptServiceDB {
         return attemptRepo.lastOpenAttempt(quizID, userID);
 
 
+    }
+
+    public List<AttemptDTO> loadAttempts(String userId) {
+
+        List<Object[]> rows = attemptRepo.loadAttempts(userId);
+
+        return rows.stream()
+                .map(row -> new AttemptDTO(
+                        ((Number) row[0]).longValue(),      // attemptID
+                        ((Number) row[1]).intValue(),       // score
+                        (Boolean) row[2],                   // completed
+                        row[3] == null ? null :
+                                (Instant) row[3],
+                        ((Number) row[4]).intValue()        // timeLimit
+                ))
+                .toList();
     }
 }
